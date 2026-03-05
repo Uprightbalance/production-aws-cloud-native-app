@@ -10,6 +10,7 @@ permissions:
   contents: read
 
 jobs:
+
   build:
 
     runs-on: ubuntu-latest
@@ -17,36 +18,32 @@ jobs:
     env:
       AWS_REGION: us-east-1
       ECR_REPOSITORY: backend
+      IMAGE_TAG: ${{ github.sha }}
 
     steps:
 
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # Assume AWS Role via OIDC
+      # Configure AWS credentials via OIDC
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: arn:aws:iam::10741811189:role/github-ci-role
-          aws-region: us-east-1
+          aws-region: ${{ env.AWS_REGION }}
 
-      # Login to ECR
+      # Login to Amazon ECR
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      # Build Docker Image (BACKEND DIRECTORY)
-      - name: Build Image
+      # Build Docker image
+      - name: Build Docker Image
         run: |
           cd mrbaffo-backend
-          docker build -t $ECR_REPOSITORY .
+          docker build -t ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:$IMAGE_TAG .
 
-      # Tag Image
-      - name: Tag Image
-        run: |
-          docker tag backend:latest ${{ steps.login-ecr.outputs.registry }}/backend:${{ github.sha }}
-
-      # Push Image
+      # Push image to ECR
       - name: Push Image
         run: |
-          docker push ${{ steps.login-ecr.outputs.registry }}/backend:${{ github.sha }}
+          docker push ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:$IMAGE_TAG
