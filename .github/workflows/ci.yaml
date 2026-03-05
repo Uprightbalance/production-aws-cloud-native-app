@@ -33,7 +33,7 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v2
 
       - name: Build Docker Image
-        working-directory: ./mr-baffo-backend
+        working-directory: ./mrbaffo-backend
         run: |
           docker build -t $ECR_REPOSITORY:$IMAGE_TAG .
 
