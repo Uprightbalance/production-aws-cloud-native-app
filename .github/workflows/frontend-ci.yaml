@@ -63,6 +63,6 @@ jobs:
           git config user.email "uprightojieh316@gmail.com"
           git config user.name "github-actions"
 
-          git commit -am "Update backend image to $IMAGE_TAG"
+          git commit -am "Update frontend image to $IMAGE_TAG"
 
           git push origin main
