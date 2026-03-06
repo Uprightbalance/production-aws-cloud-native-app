@@ -56,7 +56,7 @@ jobs:
           git clone https://github.com/Uprightbalance/gitops-repo.git
           cd gitops-repo
 
-          # Replace remote with authenticated URL
+          # replace remote with authenticated URL
           git remote set-url origin https://$GITOPS_TOKEN@github.com/Uprightbalance/gitops-repo.git
 
           sed -i "s|image:.*frontend.*|image: ${{ steps.login-ecr.outputs.registry }}/frontend:$IMAGE_TAG|g" k8s/frontend/dev/deployment.yaml
