@@ -1,0 +1,68 @@
+name: Build and Push Backend Image
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  id-token: write
+  contents: write
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    env:
+      AWS_REGION: us-east-1
+      ECR_REPOSITORY: frontend
+      IMAGE_TAG: ${{ github.sha }}
+
+    steps:
+
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # Configure AWS credentials via OIDC
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::010741811189:role/github-ci-role
+          aws-region: ${{ env.AWS_REGION }}
+
+      # Login to Amazon ECR
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      # Build Docker image
+      - name: Build Docker Image
+        run: |
+          cd mrbaffo-frontend
+          docker build -t ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:$IMAGE_TAG .
+
+      # Push image to ECR
+      - name: Push Image
+        run: |
+          docker push ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:$IMAGE_TAG
+
+      # Update GitOps Repo
+      - name: Update GitOps Repo
+        env:
+          GITOPS_TOKEN: ${{ secrets.GITOPS_TOKEN }}
+        run: |
+          git clone https://github.com/Uprightbalance/gitops-repo.git
+          cd gitops-repo
+
+          # Replace remote with authenticated URL
+          git remote set-url origin https://$GITOPS_TOKEN@github.com/Uprightbalance/gitops-repo.git
+
+          sed -i "s|IMAGE_TAG|$IMAGE_TAG|g" k8s/frontend/dev/deployment.yaml
+          git config user.email "uprightojieh316@gmail.com"
+          git config user.name "github-actions"
+
+          git commit -am "Update backend image to $IMAGE_TAG"
+
+          git push origin main
