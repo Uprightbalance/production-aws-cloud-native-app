@@ -1,4 +1,4 @@
-name: Build and Push Backend Image
+name: Build and Push Frontend Image
 
 on:
   push:
@@ -59,7 +59,7 @@ jobs:
           # Replace remote with authenticated URL
           git remote set-url origin https://$GITOPS_TOKEN@github.com/Uprightbalance/gitops-repo.git
 
-          sed -i "s|IMAGE_TAG|$IMAGE_TAG|g" k8s/frontend/dev/deployment.yaml
+          sed -i "s|image:.*frontend.*|image: ${{ steps.login-ecr.outputs.registry }}/frontend:$IMAGE_TAG|g" k8s/frontend/dev/deployment.yaml
           git config user.email "uprightojieh316@gmail.com"
           git config user.name "github-actions"
 
