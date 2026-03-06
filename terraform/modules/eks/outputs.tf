@@ -15,11 +15,11 @@ output "cluster_certificate_authority_data" {
 }
 
 output "oidc_provider_arn" {
-  value = aws_iam_openid_connect_provider.this.arn
+  value = aws_iam_openid_connect_provider.eks.arn
 }
 
 output "oidc_provider_url" {
-  value = aws_iam_openid_connect_provider.this.url
+  value = aws_iam_openid_connect_provider.eks.url
 }
 
 output "node_group_role_arn" {

@@ -66,3 +66,9 @@ output "oidc_provider_arn" {
 output "node_group_role_arn" {
   value = module.eks.node_group_role_arn
 }
+
+output "oidc_provider_url" {
+  description = "OIDC Provider URL"
+  value       = module.eks.oidc_provider_url
+}
+

@@ -9,6 +9,8 @@ module "eks" {
   source          = "../../modules/eks"
   cluster_name    = "dev-cluster"
   private_subnets = module.vpc.private_subnet_ids
+  vpc_id          = module.vpc.vpc_id
+  aws_region      = "us-east-1"
 }
 
 module "rds" {
