@@ -7,7 +7,7 @@ on:
 
 permissions:
   id-token: write
-  contents: read
+  contents: write
 
 jobs:
 
@@ -47,3 +47,17 @@ jobs:
       - name: Push Image
         run: |
           docker push ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:$IMAGE_TAG
+
+      # Update GitOps Repo
+      - name: Update GitOps repo
+        run: |
+          git clone https://github.com/Uprightbalance/gitops-repo.git
+          cd gitops-repo
+
+          sed -i "s|image:.*|image: ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:$IMAGE_TAG|g" k8s/backend/dev/deployment.yaml
+
+          git config user.email "uprightojieh316@gmail.com"
+          git config user.name "github-actions"
+
+          git commit -am "Update backend image to $IMAGE_TAG"
+          git push
