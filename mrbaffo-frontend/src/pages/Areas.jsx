@@ -8,51 +8,62 @@ export default function Areas() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    let mounted = true;
-    const loadAreas = async () => {
+    let isMounted = true;
+
+    async function loadAreas() {
       try {
         const { data } = await fetchAreas();
-        if (mounted) {
+
+        if (isMounted) {
           setAreas(Array.isArray(data) ? data : []);
         }
       } catch (err) {
-        if (mounted) setError(err.message || "Failed to load areas.");
+        if (isMounted) {
+          setError(err.message || "Failed to load service areas");
+        }
       } finally {
-        if (mounted) setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
-    };
+    }
+
     loadAreas();
+
     return () => {
-      mounted = false;
+      isMounted = false;
     };
   }, []);
 
   return (
     <MainLayout>
-      <div className="space-y-4">
-        <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
-          Service Areas
-        </h1>
+      <div className="space-y-6">
+        <h1 className="text-2xl font-semibold">Service Areas</h1>
 
-        {loading && <p className="text-sm text-slate-500">Loading service areas…</p>}
-        {error && <p className="text-sm text-red-600">{error}</p>}
+        {loading && (
+          <p className="text-slate-500">Loading service areas...</p>
+        )}
+
+        {error && (
+          <p className="text-red-500">{error}</p>
+        )}
 
         {!loading && !error && (
-          <ul className="grid gap-3 sm:grid-cols-2">
-            {areas.length > 0 ? (
-              areas.map((area) => (
-                <li
-                  key={area}
-                  className="rounded-lg bg-white p-4 text-sm text-slate-800 shadow-sm"
-                >
-                  {area}
-                </li>
-              ))
-            ) : (
-              <li className="text-sm text-slate-500">
-                No areas available at the moment.
+          <ul className="grid gap-4 md:grid-cols-2">
+            {areas.map((area) => (
+              <li
+                key={area.name}
+                className="rounded-lg bg-white p-5 shadow-sm border"
+              >
+                <h2 className="text-lg font-semibold">
+                  {area.name}
+                </h2>
+
+                <p className="text-sm text-slate-600 mt-2">
+                  {area.description}
+                </p>
               </li>
-            )}
+            ))}
           </ul>
         )}
       </div>
