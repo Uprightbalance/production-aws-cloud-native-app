@@ -9,17 +9,18 @@ export default function Services() {
 
   useEffect(() => {
     let isMounted = true;
-
-    async function loadServices() {
+    async function load() {
       try {
+        setLoading(true);
+        setError("");
         const { data } = await fetchServices();
-
         if (isMounted) {
+          // Backend contract: data is string[]
           setServices(Array.isArray(data) ? data : []);
         }
-      } catch (err) {
+      } catch (e) {
         if (isMounted) {
-          setError(err.message || "Failed to load services");
+          setError(e.message || "Failed to load services.");
         }
       } finally {
         if (isMounted) {
@@ -27,9 +28,7 @@ export default function Services() {
         }
       }
     }
-
-    loadServices();
-
+    load();
     return () => {
       isMounted = false;
     };
@@ -37,34 +36,42 @@ export default function Services() {
 
   return (
     <MainLayout>
-      <div className="space-y-6">
-        <h1 className="text-2xl font-semibold">Our Services</h1>
+      <div className="space-y-4">
+        <header>
+          <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
+            Services
+          </h1>
+          <p className="mt-1 text-sm text-slate-600">
+            Professional dry cleaning, laundry, alterations, and more.
+          </p>
+        </header>
 
         {loading && (
-          <p className="text-slate-500">Loading services...</p>
+          <p className="text-sm text-slate-500">Loading services…</p>
         )}
 
         {error && (
-          <p className="text-red-500">{error}</p>
+          <p className="text-sm text-red-600">
+            {error}
+          </p>
         )}
 
         {!loading && !error && (
-          <div className="grid gap-4 md:grid-cols-2">
+          <ul className="grid gap-3 sm:grid-cols-2">
             {services.map((service) => (
-              <div
-                key={service.name}
-                className="rounded-lg bg-white p-5 shadow-sm border"
+              <li
+                key={service}
+                className="rounded-lg bg-white p-4 text-sm text-slate-800 shadow-sm"
               >
-                <h2 className="text-lg font-semibold">
-                  {service.name}
-                </h2>
-
-                <p className="text-sm text-slate-600 mt-2">
-                  {service.description}
-                </p>
-              </div>
+                {service}
+              </li>
             ))}
-          </div>
+            {services.length === 0 && (
+              <li className="text-sm text-slate-500">
+                No services available at the moment.
+              </li>
+            )}
+          </ul>
         )}
       </div>
     </MainLayout>

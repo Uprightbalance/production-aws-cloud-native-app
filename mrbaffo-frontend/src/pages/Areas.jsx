@@ -9,17 +9,18 @@ export default function Areas() {
 
   useEffect(() => {
     let isMounted = true;
-
-    async function loadAreas() {
+    async function load() {
       try {
+        setLoading(true);
+        setError("");
         const { data } = await fetchAreas();
-
         if (isMounted) {
+          // Backend contract: data is string[]
           setAreas(Array.isArray(data) ? data : []);
         }
-      } catch (err) {
+      } catch (e) {
         if (isMounted) {
-          setError(err.message || "Failed to load service areas");
+          setError(e.message || "Failed to load service areas.");
         }
       } finally {
         if (isMounted) {
@@ -27,9 +28,7 @@ export default function Areas() {
         }
       }
     }
-
-    loadAreas();
-
+    load();
     return () => {
       isMounted = false;
     };
@@ -37,33 +36,41 @@ export default function Areas() {
 
   return (
     <MainLayout>
-      <div className="space-y-6">
-        <h1 className="text-2xl font-semibold">Service Areas</h1>
+      <div className="space-y-4">
+        <header>
+          <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
+            Service Areas
+          </h1>
+          <p className="mt-1 text-sm text-slate-600">
+            MR. BAFFO proudly serves neighbourhoods across Toronto.
+          </p>
+        </header>
 
         {loading && (
-          <p className="text-slate-500">Loading service areas...</p>
+          <p className="text-sm text-slate-500">Loading service areas…</p>
         )}
 
         {error && (
-          <p className="text-red-500">{error}</p>
+          <p className="text-sm text-red-600">
+            {error}
+          </p>
         )}
 
         {!loading && !error && (
-          <ul className="grid gap-4 md:grid-cols-2">
+          <ul className="grid gap-3 sm:grid-cols-2">
             {areas.map((area) => (
               <li
-                key={area.name}
-                className="rounded-lg bg-white p-5 shadow-sm border"
+                key={area}
+                className="rounded-lg bg-white p-4 text-sm text-slate-800 shadow-sm"
               >
-                <h2 className="text-lg font-semibold">
-                  {area.name}
-                </h2>
-
-                <p className="text-sm text-slate-600 mt-2">
-                  {area.description}
-                </p>
+                {area}
               </li>
             ))}
+            {areas.length === 0 && (
+              <li className="text-sm text-slate-500">
+                No areas available at the moment.
+              </li>
+            )}
           </ul>
         )}
       </div>
