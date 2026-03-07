@@ -1,61 +1,61 @@
 import { useEffect, useState } from "react";
-import { fetchServices } from "../services/business";
+import MainLayout from "../layouts/MainLayout";
+import { fetchServices } from "../api/client";
 
 export default function Services() {
   const [services, setServices] = useState([]);
-  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     let mounted = true;
-
     const loadServices = async () => {
       try {
-        const response = await fetchServices();
-        const data = response?.data || [];
-
+        const { data } = await fetchServices();
         if (mounted) {
           setServices(Array.isArray(data) ? data : []);
         }
       } catch (err) {
-        if (mounted) {
-          setError(err.message || "Failed to load services");
-        }
+        if (mounted) setError(err.message || "Failed to load services.");
+      } finally {
+        if (mounted) setLoading(false);
       }
     };
-
     loadServices();
-
     return () => {
       mounted = false;
     };
   }, []);
 
-  if (error) {
-    return (
-      <div className="p-6 text-red-600">
-        Error loading services: {error}
-      </div>
-    );
-  }
-
   return (
-    <div className="mx-auto max-w-5xl p-6">
-      <h1 className="text-2xl font-bold mb-6">Our Services</h1>
+    <MainLayout>
+      <div className="space-y-4">
+        <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
+          Services
+        </h1>
 
-      <ul className="grid gap-4 sm:grid-cols-2">
-        {services.map((service) => (
-          <li
-            key={service.name}
-            className="rounded-lg bg-white p-4 shadow"
-          >
-            <h2 className="font-semibold">{service.name}</h2>
+        {loading && <p className="text-sm text-slate-500">Loading services…</p>}
+        {error && <p className="text-sm text-red-600">{error}</p>}
 
-            <p className="text-sm text-slate-600 mt-1">
-              {service.description}
-            </p>
-          </li>
-        ))}
-      </ul>
-    </div>
+        {!loading && !error && (
+          <ul className="grid gap-3 sm:grid-cols-2">
+            {services.length > 0 ? (
+              services.map((service) => (
+                <li
+                  key={service}
+                  className="rounded-lg bg-white p-4 text-sm text-slate-800 shadow-sm"
+                >
+                  {service}
+                </li>
+              ))
+            ) : (
+              <li className="text-sm text-slate-500">
+                No services available at the moment.
+              </li>
+            )}
+          </ul>
+        )}
+      </div>
+    </MainLayout>
   );
 }

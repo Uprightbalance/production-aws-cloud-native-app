@@ -1,61 +1,61 @@
 import { useEffect, useState } from "react";
-import { fetchAreas } from "../services/business";
+import MainLayout from "../layouts/MainLayout";
+import { fetchAreas } from "../api/client";
 
 export default function Areas() {
   const [areas, setAreas] = useState([]);
-  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     let mounted = true;
-
     const loadAreas = async () => {
       try {
-        const response = await fetchAreas();
-        const data = response?.data || [];
-
+        const { data } = await fetchAreas();
         if (mounted) {
           setAreas(Array.isArray(data) ? data : []);
         }
       } catch (err) {
-        if (mounted) {
-          setError(err.message || "Failed to load areas");
-        }
+        if (mounted) setError(err.message || "Failed to load areas.");
+      } finally {
+        if (mounted) setLoading(false);
       }
     };
-
     loadAreas();
-
     return () => {
       mounted = false;
     };
   }, []);
 
-  if (error) {
-    return (
-      <div className="p-6 text-red-600">
-        Error loading areas: {error}
-      </div>
-    );
-  }
-
   return (
-    <div className="mx-auto max-w-5xl p-6">
-      <h1 className="text-2xl font-bold mb-6">Service Areas</h1>
+    <MainLayout>
+      <div className="space-y-4">
+        <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
+          Service Areas
+        </h1>
 
-      <ul className="grid gap-4 sm:grid-cols-2">
-        {areas.map((area) => (
-          <li
-            key={area.name}
-            className="rounded-lg bg-white p-4 shadow"
-          >
-            <h2 className="font-semibold">{area.name}</h2>
+        {loading && <p className="text-sm text-slate-500">Loading service areas…</p>}
+        {error && <p className="text-sm text-red-600">{error}</p>}
 
-            <p className="text-sm text-slate-600 mt-1">
-              {area.description}
-            </p>
-          </li>
-        ))}
-      </ul>
-    </div>
+        {!loading && !error && (
+          <ul className="grid gap-3 sm:grid-cols-2">
+            {areas.length > 0 ? (
+              areas.map((area) => (
+                <li
+                  key={area}
+                  className="rounded-lg bg-white p-4 text-sm text-slate-800 shadow-sm"
+                >
+                  {area}
+                </li>
+              ))
+            ) : (
+              <li className="text-sm text-slate-500">
+                No areas available at the moment.
+              </li>
+            )}
+          </ul>
+        )}
+      </div>
+    </MainLayout>
   );
 }
