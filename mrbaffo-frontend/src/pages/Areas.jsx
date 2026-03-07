@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import MainLayout from "../layouts/MainLayout";
-import { fetchAreas } from "../api/client";
+import { fetchAreas } from "../services/business";
 
 export default function Areas() {
   const [areas, setAreas] = useState([]);
@@ -9,18 +8,18 @@ export default function Areas() {
 
   useEffect(() => {
     let isMounted = true;
-    async function load() {
+
+    async function loadAreas() {
       try {
-        setLoading(true);
-        setError("");
-        const { data } = await fetchAreas();
+        const response = await fetchAreas();
+        const { data } = response;
+
         if (isMounted) {
-          // Backend contract: data is string[]
           setAreas(Array.isArray(data) ? data : []);
         }
-      } catch (e) {
+      } catch (err) {
         if (isMounted) {
-          setError(e.message || "Failed to load service areas.");
+          setError(err.message || "Failed to load areas.");
         }
       } finally {
         if (isMounted) {
@@ -28,52 +27,50 @@ export default function Areas() {
         }
       }
     }
-    load();
+
+    loadAreas();
+
     return () => {
       isMounted = false;
     };
   }, []);
 
-  return (
-    <MainLayout>
-      <div className="space-y-4">
-        <header>
-          <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
-            Service Areas
-          </h1>
-          <p className="mt-1 text-sm text-slate-600">
-            MR. BAFFO proudly serves neighbourhoods across Toronto.
-          </p>
-        </header>
-
-        {loading && (
-          <p className="text-sm text-slate-500">Loading service areas…</p>
-        )}
-
-        {error && (
-          <p className="text-sm text-red-600">
-            {error}
-          </p>
-        )}
-
-        {!loading && !error && (
-          <ul className="grid gap-3 sm:grid-cols-2">
-            {areas.map((area) => (
-              <li
-                key={area}
-                className="rounded-lg bg-white p-4 text-sm text-slate-800 shadow-sm"
-              >
-                {area}
-              </li>
-            ))}
-            {areas.length === 0 && (
-              <li className="text-sm text-slate-500">
-                No areas available at the moment.
-              </li>
-            )}
-          </ul>
-        )}
+  if (loading) {
+    return (
+      <div className="mx-auto max-w-5xl p-6">
+        <p className="text-slate-600">Loading service areas...</p>
       </div>
-    </MainLayout>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="mx-auto max-w-5xl p-6">
+        <p className="text-red-600">{error}</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mx-auto max-w-5xl p-6">
+      <h1 className="text-2xl font-bold mb-6">Service Areas</h1>
+
+      <ul className="grid gap-4 sm:grid-cols-2">
+        {areas.map((area) => (
+          <li
+            key={area.name}
+            className="rounded-lg bg-white p-4 shadow-sm border"
+          >
+            <h2 className="text-lg font-semibold text-slate-900">
+              {area.name}
+            </h2>
+
+            <p className="mt-2 text-sm text-slate-600">
+              {area.description}
+            </p>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
