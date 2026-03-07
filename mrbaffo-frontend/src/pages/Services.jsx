@@ -3,50 +3,37 @@ import { fetchServices } from "../services/business";
 
 export default function Services() {
   const [services, setServices] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    let isMounted = true;
+    let mounted = true;
 
-    async function loadServices() {
+    const loadServices = async () => {
       try {
         const response = await fetchServices();
-        const { data } = response;
+        const data = response?.data || [];
 
-        if (isMounted) {
+        if (mounted) {
           setServices(Array.isArray(data) ? data : []);
         }
       } catch (err) {
-        if (isMounted) {
-          setError(err.message || "Failed to load services.");
-        }
-      } finally {
-        if (isMounted) {
-          setLoading(false);
+        if (mounted) {
+          setError(err.message || "Failed to load services");
         }
       }
-    }
+    };
 
     loadServices();
 
     return () => {
-      isMounted = false;
+      mounted = false;
     };
   }, []);
 
-  if (loading) {
-    return (
-      <div className="mx-auto max-w-5xl p-6">
-        <p className="text-slate-600">Loading services...</p>
-      </div>
-    );
-  }
-
   if (error) {
     return (
-      <div className="mx-auto max-w-5xl p-6">
-        <p className="text-red-600">{error}</p>
+      <div className="p-6 text-red-600">
+        Error loading services: {error}
       </div>
     );
   }
@@ -59,13 +46,11 @@ export default function Services() {
         {services.map((service) => (
           <li
             key={service.name}
-            className="rounded-lg bg-white p-4 shadow-sm border"
+            className="rounded-lg bg-white p-4 shadow"
           >
-            <h2 className="text-lg font-semibold text-slate-900">
-              {service.name}
-            </h2>
+            <h2 className="font-semibold">{service.name}</h2>
 
-            <p className="mt-2 text-sm text-slate-600">
+            <p className="text-sm text-slate-600 mt-1">
               {service.description}
             </p>
           </li>

@@ -3,50 +3,37 @@ import { fetchAreas } from "../services/business";
 
 export default function Areas() {
   const [areas, setAreas] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    let isMounted = true;
+    let mounted = true;
 
-    async function loadAreas() {
+    const loadAreas = async () => {
       try {
         const response = await fetchAreas();
-        const { data } = response;
+        const data = response?.data || [];
 
-        if (isMounted) {
+        if (mounted) {
           setAreas(Array.isArray(data) ? data : []);
         }
       } catch (err) {
-        if (isMounted) {
-          setError(err.message || "Failed to load areas.");
-        }
-      } finally {
-        if (isMounted) {
-          setLoading(false);
+        if (mounted) {
+          setError(err.message || "Failed to load areas");
         }
       }
-    }
+    };
 
     loadAreas();
 
     return () => {
-      isMounted = false;
+      mounted = false;
     };
   }, []);
 
-  if (loading) {
-    return (
-      <div className="mx-auto max-w-5xl p-6">
-        <p className="text-slate-600">Loading service areas...</p>
-      </div>
-    );
-  }
-
   if (error) {
     return (
-      <div className="mx-auto max-w-5xl p-6">
-        <p className="text-red-600">{error}</p>
+      <div className="p-6 text-red-600">
+        Error loading areas: {error}
       </div>
     );
   }
@@ -59,13 +46,11 @@ export default function Areas() {
         {areas.map((area) => (
           <li
             key={area.name}
-            className="rounded-lg bg-white p-4 shadow-sm border"
+            className="rounded-lg bg-white p-4 shadow"
           >
-            <h2 className="text-lg font-semibold text-slate-900">
-              {area.name}
-            </h2>
+            <h2 className="font-semibold">{area.name}</h2>
 
-            <p className="mt-2 text-sm text-slate-600">
+            <p className="text-sm text-slate-600 mt-1">
               {area.description}
             </p>
           </li>
