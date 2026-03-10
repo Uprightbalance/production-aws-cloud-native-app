@@ -47,6 +47,7 @@ resource "aws_db_subnet_group" "this" {
 resource "random_password" "db_password" {
   length  = 20
   special = true
+  override_special = "!#$%^&*()-_=+[]{}<>?"
 }
 
 ############################################

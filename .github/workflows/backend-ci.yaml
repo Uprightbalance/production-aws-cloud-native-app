@@ -59,10 +59,10 @@ jobs:
           # replace remote with authenticated URL
           git remote set-url origin https://$GITOPS_TOKEN@github.com/Uprightbalance/gitops-repo.git
 
-          sed -i "s|image:.*backend.*|image: ${{ steps.login-ecr.outputs.registry }}/backend:$IMAGE_TAG|g" k8s/backend/dev/deployment.yaml
+          sed -i "s/newTag:.*/newTag: $IMAGE_TAG/" k8s/backend/dev/kustomization.yaml
           git config user.email "uprightojieh316@gmail.com"
           git config user.name "github-actions"
 
-          git commit -am "Update backend image to $IMAGE_TAG"
+          git commit -am "deploy backend $IMAGE_TAG to dev"
 
           git push origin main
