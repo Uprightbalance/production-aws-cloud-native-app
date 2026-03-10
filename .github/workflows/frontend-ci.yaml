@@ -59,7 +59,7 @@ jobs:
           # replace remote with authenticated URL
           git remote set-url origin https://$GITOPS_TOKEN@github.com/Uprightbalance/gitops-repo.git
 
-          sed -i "s/newTag:.*/newTag: $IMAGE_TAG/" k8s/backend/dev/kustomization.yaml
+          sed -i "s/newTag:.*/newTag: $IMAGE_TAG/" k8s/frontend/dev/kustomization.yaml
           git config user.email "uprightojieh316@gmail.com"
           git config user.name "github-actions"
 
