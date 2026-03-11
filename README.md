@@ -74,6 +74,61 @@ Infrastructure is provisioned using **Terraform** with **remote state stored in 
 
 ---
 
+# Repository Structure
+
+```
+ terraform
+    ├── environments
+    │   ├── Dev
+    │   │   ├── backend.tf
+    │   │   ├── main.tf
+    │   │   └── output.tf
+    │   ├── prod
+    │   │   ├── backend.tf
+    │   │   ├── main.tf
+    │   │   └── output.tf
+    │   └── staging
+    │       ├── backend.tf
+    │       ├── main.tf
+    │       └── output.tf
+    ├── global
+    │   ├── github_oidc.tf
+    │   ├── outputs.tf
+    │   └── provider.tf
+    └── modules
+        ├── eks
+        │   ├── alb-controller.tf
+        │   ├── alb-irsa.tf
+        │   ├── alb-policy.tf
+        │   ├── alb-service-account.tf
+        │   ├── cluster.tf
+        │   ├── iam.tf
+        │   ├── iam_policy.json
+        │   ├── main.tf
+        │   ├── nodegroup.tf
+        │   ├── oidc.tf
+        │   ├── outputs.tf
+        │   ├── provider.tf
+        │   └── variables.tf
+        ├── github_oidc
+        │   ├── main.tf
+        │   ├── outputs.tf
+        │   └── variables.tf
+        ├── rds
+        │   ├── main.tf
+        │   ├── outputs.tf
+        │   └── variables.tf
+        └── vpc
+            ├── eip.tf
+            ├── igw.tf
+            ├── nat.tf
+            ├── output.tf
+            ├── rt.tf
+            ├── subnets.tf
+            ├── variables.tf
+            └── vpc.tf
+```
+
 # Infrastructure Components
 
 ## Networking (VPC Module)
