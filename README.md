@@ -282,40 +282,6 @@ The following CLI tools were used:
 
 ---
 
-# Secrets Management
-
-Application secrets are stored using **Kubernetes Secrets** inside each namespace.
-
-Example secrets:
-
-* Backend environment variables
-* Database credentials
-* Frontend configuration
-
----
-
-# How to Deploy
-
-### 1. Clone Repository
-
-```
-git clone <repo-url>
-cd <repo>
-```
-
-### 2. Initialize Terraform
-
-```
-terraform init
-```
-
-### 3. Plan Infrastructure
-
-```
-terraform plan
-```
-
-### 4. Apply Infrastructure
 
 ```
 terraform apply
