@@ -418,11 +418,6 @@ Key operational considerations include:
 
 # Troubleshooting Scenarios & Incident Handling
 
-To validate platform reliability, several realistic failure scenarios were considered as part of the design.
-
-These scenarios help demonstrate how the platform can be debugged and recovered during incidents.
-
----
 ## Scenario 1: Backend Pod CrashLoopBackOff
 
 ### Example Cause
