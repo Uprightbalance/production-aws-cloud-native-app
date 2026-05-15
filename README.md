@@ -309,6 +309,40 @@ Repository:
 https://github.com/Uprightbalance/backend-frontend--DEV_TAG-IMAGE-promote-to-staging-prod-env.git
 
 ---
+## Real-World Problem This Platform Solves
+
+Modern engineering teams often struggle with:
+
+- inconsistent deployments across environments
+- manual infrastructure provisioning
+- unsafe deployment workflows
+- configuration drift
+- lack of deployment traceability
+- operational complexity when managing Kubernetes workloads at scale
+- insecure CI/CD credential management
+- difficulty recovering environments consistently after failures
+
+This platform was designed to address those challenges by implementing a cloud-native delivery architecture based on:
+
+- Infrastructure as Code with Terraform
+- Kubernetes orchestration on Amazon EKS
+- GitOps deployment workflows using ArgoCD
+- immutable image promotion across environments
+- workload identity with IAM Roles for Service Accounts (IRSA)
+- declarative infrastructure and workload management
+
+The objective was not simply to deploy an application, but to simulate how real engineering organizations build internal platforms that improve:
+
+- deployment safety
+- operational consistency
+- infrastructure reproducibility
+- release traceability
+- recovery readiness
+- environment standardization
+- security posture
+
+This project reflects practical DevOps and Platform Engineering patterns commonly used in modern cloud-native environments.
+
 # Architecture Decisions & Trade-offs
 
 This project intentionally includes architecture trade-offs to reflect practical platform engineering decision-making.
